@@ -15,9 +15,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -119,7 +119,7 @@ public class PartidaController implements Initializable {
 	@FXML
 	private void onResolverAction(ActionEvent e) {
 		Alert a;
-		if(input.getText().length() > 1 && input.getText().toUpperCase().equals(model.getPalabraSeleccionada())) 
+		if(input.getText().length() > 1 && input.getText().toUpperCase().equals(model.getPalabraSeleccionada()))
 			desvelarPalabra();
 		else if(input.getText().length() <= 1 ) {
 			a = new Alert(AlertType.ERROR);
@@ -191,16 +191,16 @@ public class PartidaController implements Initializable {
 	}
 	
 	private void partidaTerminada() {
-		Alert a;
+		TextInputDialog dialog;
 		AhorcadoApp.enPartida = false;
 		imagenAhorcado.setImage(new Image(getClass().getResourceAsStream("/hangman/" + model.getErrores() + ".png")));
-		puntuacionesController.guardarPuntuacion(model.getPuntuacion());
-		a = new Alert(AlertType.ERROR);
-		a.initOwner(AhorcadoApp.primaryStage);
-		a.setTitle("¡Has perdido!");
-		a.setHeaderText("Has perdido, ¡más suerte la próxima vez!");
-		a.setContentText("Se ha guardado tu puntuación en el fichero de puntuaciones.");
-		Optional<ButtonType> opc = a.showAndWait();
+		dialog = new TextInputDialog();
+		dialog.initOwner(AhorcadoApp.primaryStage);
+		dialog.setTitle("¡Has perdido!");
+		dialog.setHeaderText("Has perdido, ¡más suerte la próxima vez!");
+		dialog.setContentText("Introduce tu nombre de usuario para guardar tu puntuación en el fichero:");
+		Optional<String> opc = dialog.showAndWait();
+		puntuacionesController.guardarPuntuacion(model.getPuntuacion(), opc.get());
 		if(opc.isPresent())
 			init(true);
 	}

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -21,7 +22,7 @@ public class PuntuacionesController implements Initializable {
 	private PuntuacionesModel model = new PuntuacionesModel();
 	private File f;
 	
-	private ArrayList<Integer> puntuaciones = new ArrayList<>();
+	private ArrayList<String> puntuaciones = new ArrayList<>();
 	
 	@FXML
 	private BorderPane view;
@@ -61,13 +62,14 @@ public class PuntuacionesController implements Initializable {
 		try {
 			this.f = f;
 			br = new BufferedReader(new FileReader(f));
-			while((linea = br.readLine()) != null)
-				puntuaciones.add(Integer.valueOf(linea));
-			Collections.sort(puntuaciones);
+			while((linea = br.readLine()) != null) {
+				puntuaciones.add(linea);				
+			}
+			Collections.sort(puntuaciones, new ComparadorPuntuaciones());
 			Collections.reverse(puntuaciones);
 			model.puntuacionesProperty().clear();
 			for(int i = 0; i < puntuaciones.size(); i++)
-				model.puntuacionesProperty().add(i+1 + ": " + puntuaciones.get(i));
+				model.puntuacionesProperty().add(i+1 + " - " + puntuaciones.get(i));
 			br.close();
 			listaView.setItems(model.puntuacionesProperty());
 		} catch (IOException e) {
@@ -75,14 +77,39 @@ public class PuntuacionesController implements Initializable {
 		}
 	}
 	
-	public void guardarPuntuacion(int puntuacion) {
-		model.puntuacionesProperty().add(String.valueOf(puntuacion));
+	public void guardarPuntuacion(int puntuacion, String usuario) {
+		model.puntuacionesProperty().add(usuario + ": " + String.valueOf(puntuacion));
 		try (FileWriter fw = new FileWriter(f, true)){
-			fw.write(String.valueOf(puntuacion) + '\n');
+			fw.write(usuario + ": " + String.valueOf(puntuacion) + '\n');
 			cargarPuntuaciones(f);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
+//	private void ordenarArray(List<String> array) {
+//		List<String> ordenado = new ArrayList<>(array);
+//		
+//		
+//		for(int i = 0; i < ordenado.size() - 1; i++) {
+//			
+//			String act = ordenado.get(i);
+//			String sig = ordenado.get(i+1);
+//			int index = act.indexOf(':');
+//			int indexSig = sig.indexOf(':');
+//			int numAct = Integer.parseInt(act.substring(index+2, act.length()));
+//			int numSig = Integer.parseInt(sig.substring(indexSig+2, sig.length()));
+//
+//			if(numAct > numSig) {
+//				ordenado.set(i, sig);
+//				ordenado.set(i+1, act);
+////				System.out.println("NumAct = " + ordenado.get(i));
+////				System.out.println("NumSig = " + ordenado.get(i+1));
+//			}			
+//			System.out.println(ordenado);
+//			
+//		}
+//		
+//		this.puntuaciones = new ArrayList<>(ordenado);
+//	}
 }

@@ -2,7 +2,6 @@ package app;
 
 import java.util.Optional;
 
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -11,8 +10,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import partida.PartidaController;
-import puntuaciones.PuntuacionesController;
 import root.RootController;
 
 enum Antonio {
@@ -24,7 +21,6 @@ public class AhorcadoApp extends Application {
 	public static Stage primaryStage;
 	
 	private RootController controller = new RootController();
-	private PuntuacionesController puntuacionesController = new PuntuacionesController();
 	
 	public static boolean enPartida = false;
 	
@@ -55,11 +51,8 @@ public class AhorcadoApp extends Application {
 		a.setHeaderText("¿Seguro que quieres salir?");
 		a.setContentText("¡Hay una partida en juego!");
 		Optional<ButtonType> res = a.showAndWait();
-		if(res.get() == ButtonType.OK) {
-			if(PartidaController.getInstance().getPuntuacion() != 0)
-				puntuacionesController.guardarPuntuacion(PartidaController.getInstance().getPuntuacion());
+		if(res.get() == ButtonType.OK) 
 			primaryStage.close();
-		} 
 		
 	}
 	

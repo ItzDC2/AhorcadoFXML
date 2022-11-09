@@ -6,13 +6,12 @@ public class ComparadorPuntuacion implements Comparator<String> {
 
 	@Override
 	public int compare(String o1, String o2) {
-		try {
-			int i1 = Integer.parseInt(o1);
-			int i2 = Integer.parseInt(o2);
-			return Integer.compare(i1, i2);
-		} catch(NumberFormatException ex) {
-			throw new RuntimeException(ex);
-		}
+		return extraerInt(o1) - extraerInt(o2);
+	}
+
+	private int extraerInt(String s) {
+		String num = s.replaceAll("\\D", ""); //Si contiene algún dígito numérico lo reemplaza por nada
+		return num.isEmpty() ? 0 : Integer.parseInt(num); //Si la cadena está vacía la descarta y devuelve 0 si no, devuelve el número
 	}
 
 }

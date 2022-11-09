@@ -65,7 +65,7 @@ public class PuntuacionesController implements Initializable {
 			while((linea = br.readLine()) != null) {
 				puntuaciones.add(linea);				
 			}
-			Collections.sort(puntuaciones, new ComparadorPuntuaciones());
+			Collections.sort(puntuaciones, new ComparadorPuntuacion());
 			Collections.reverse(puntuaciones);
 			model.puntuacionesProperty().clear();
 			for(int i = 0; i < puntuaciones.size(); i++)

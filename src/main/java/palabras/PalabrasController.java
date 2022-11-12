@@ -30,7 +30,7 @@ import javafx.stage.Stage;
 public class PalabrasController implements Initializable {
 
 	private PalabrasModel model = new PalabrasModel();
-	private File f;
+	private final File file = new File("palabras.txt");
 	
 	@FXML
 	private Button agregarButton;
@@ -63,7 +63,7 @@ public class PalabrasController implements Initializable {
 		quitarButton.disableProperty().bind(model.palabraSeleccionadaProperty().isNull());
 		
 		//Cargar datos
-		cargarPalabras(new File("palabras.txt"));
+		cargarPalabras();
 		
 	}
 	
@@ -81,7 +81,7 @@ public class PalabrasController implements Initializable {
 		Optional<String> input = dialog.showAndWait();
 		if(input.isPresent() && !input.get().isBlank())
 			agregarPalabra(input.get());
-		else if(input.get().isBlank()){
+		else if(input.get().isBlank()) {
 			Alert a = new Alert(AlertType.ERROR);
 			Stage s = (Stage) a.getDialogPane().getScene().getWindow();
 			s.getIcons().add(new Image(getClass().getResourceAsStream("/hangman/error.png")));
@@ -96,7 +96,7 @@ public class PalabrasController implements Initializable {
 	@FXML
 	public void onQuitarAction(ActionEvent e) {
 		model.palabrasProperty().remove(model.palabrasProperty().indexOf(model.palabraSeleccionadaProperty().get()));
-		try (FileWriter fw = new FileWriter(f)){
+		try (FileWriter fw = new FileWriter(file)){
 			for(int i = 0; i < model.palabrasProperty().getSize(); i++) {
 				if(i == 0)
 					fw.write('\n' + model.palabrasProperty().get(i) + '\n');
@@ -107,17 +107,16 @@ public class PalabrasController implements Initializable {
 		}
 	}
 
-	private void cargarPalabras(File f) {
+	private void cargarPalabras() {
 		BufferedReader br;
 		FileWriter fw;
-		if(f.exists()) {
-			this.f = f;
+		if(file.exists()) {
 			try {
-				br = new BufferedReader(new FileReader(f));
+				br = new BufferedReader(new FileReader(file));
 				if(br.readLine() != null)
-					model.getPalabras().addAll(Files.readAllLines(f.toPath(), StandardCharsets.UTF_8));
+					model.getPalabras().addAll(Files.readAllLines(file.toPath(), StandardCharsets.UTF_8));
 				else { // Escribir datos por defecto si no encuentra palabas en el archivo.
-					fw = new FileWriter(f, true);
+					fw = new FileWriter(file, true);
 					fw.write("Atletismo".toUpperCase() + '\n');
 					fw.write("Secuestrar".toUpperCase() + '\n');
 					fw.write("Enchufar".toUpperCase() + '\n');
@@ -142,7 +141,7 @@ public class PalabrasController implements Initializable {
 	private void agregarPalabra(String palabra) {
 		if(palabra != null && !palabra.isBlank()) {		
 			model.palabrasProperty().add(palabra.toUpperCase());
-			try (FileWriter fw = new FileWriter(f, true)){
+			try (FileWriter fw = new FileWriter(file, true)){
 				fw.write(palabra.toUpperCase() + '\n');
 			} catch (IOException e) {
 				throw new RuntimeException(e);

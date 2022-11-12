@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.ResourceBundle;
 
 import app.AhorcadoApp;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -15,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -53,6 +56,12 @@ public class PartidaController implements Initializable {
 	@FXML
 	private TextField input;
 	
+	@FXML
+	private Button letraButton;
+	
+	@FXML
+	private Button resolverButton;
+	
 	public PartidaController() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PartidaView.fxml"));
@@ -70,6 +79,8 @@ public class PartidaController implements Initializable {
 		// Bindings
 		palabrasController.palabraSeleccionadaProperty().bind(model.palabraSeleccionadaProperty());
 		puntuacionJugador.textProperty().bindBidirectional(model.puntuacionProperty(), new NumberStringConverter());
+		letraButton.disableProperty().bind(input.textProperty().isEmpty());
+		resolverButton.disableProperty().bind(input.textProperty().isEmpty());
 		
 		//Actions
 		if(!AhorcadoApp.enPartida)

@@ -6,11 +6,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.SimpleListProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -20,22 +19,19 @@ import javafx.scene.layout.BorderPane;
 public class PuntuacionesController implements Initializable {
 	
 	private PuntuacionesModel model = new PuntuacionesModel();
-	private File f;
-	
-	private ArrayList<String> puntuaciones = new ArrayList<>();
+	private final File file = new File("puntuaciones.txt");
 	
 	@FXML
 	private BorderPane view;
 	
 	@FXML
-	private ListView<String> listaView;
+	private ListView<Puntuacion> listaView;
 	
 	public PuntuacionesController() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Puntuaciones.fxml"));
 			loader.setController(this);
 			loader.load();
-			cargarPuntuaciones(new File("puntuaciones.txt"));
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -45,7 +41,10 @@ public class PuntuacionesController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		//bindings
-		listaView.itemsProperty().bindBidirectional(model.puntuacionesProperty());
+		listaView.itemsProperty().bind(new SimpleListProperty<Puntuacion>(model.puntuacionesProperty().sorted()));
+		
+		//actions
+		cargarPuntuaciones();
 		
 	}
 
@@ -53,35 +52,33 @@ public class PuntuacionesController implements Initializable {
 		return view;
 	}
 	
-	
-	public void cargarPuntuaciones(File f) {
+	private void cargarPuntuaciones() {
 		BufferedReader br;
 		String linea;
-		if(!f.exists()) 
-			throw new RuntimeException("El archivo no existe o no es accesible.");	
-		try {
-			this.f = f;
-			br = new BufferedReader(new FileReader(f));
-			while((linea = br.readLine()) != null) {
-				puntuaciones.add(linea);				
+		if(file.exists()) {
+			System.out.println("Existo");
+			try {
+				br = new BufferedReader(new FileReader(file));
+				
+				model.puntuacionesProperty().clear();
+				while((linea = br.readLine()) != null) {
+					String parts[] = linea.split(": ");
+					model.getPuntuaciones().add(new Puntuacion(parts[0], Integer.parseInt(parts[1])));								
+				}
+				
+				br.close();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
-			Collections.sort(puntuaciones, new ComparadorPuntuacion());
-			Collections.reverse(puntuaciones);
-			model.puntuacionesProperty().clear();
-			for(int i = 0; i < puntuaciones.size(); i++)
-				model.puntuacionesProperty().add(i+1 + " - " + puntuaciones.get(i));
-			br.close();
-			listaView.setItems(model.puntuacionesProperty());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
 		}
 	}
 	
 	public void guardarPuntuacion(int puntuacion, String usuario) {
-		model.puntuacionesProperty().add(usuario + ": " + String.valueOf(puntuacion));
-		try (FileWriter fw = new FileWriter(f, true)){
-			fw.write(usuario + ": " + String.valueOf(puntuacion) + '\n');
-			cargarPuntuaciones(f);
+		Puntuacion p = new Puntuacion(usuario, puntuacion);
+		model.getPuntuaciones().add(p);
+		try (FileWriter fw = new FileWriter(file, true)) {
+			fw.write(p.toString() + '\n');
+			fw.flush();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

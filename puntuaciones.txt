@@ -1,8 +1,1 @@
-Test: 28
-Test: 15
-Test: 26
-Test: 21
-Test: 4
-Test: 10
-Test: 10
-Dónovan: 30
+Chuck: 4

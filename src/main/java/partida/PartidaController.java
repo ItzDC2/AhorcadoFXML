@@ -141,6 +141,7 @@ public class PartidaController implements Initializable {
 			a.show();
 		} else 
 			marcarError();
+		input.requestFocus();
 	}
 	
 	private void init(boolean perdio) {
@@ -191,6 +192,7 @@ public class PartidaController implements Initializable {
 			a.show();
 			input.setText("");
 		}
+		input.requestFocus();
 	}
 	
 	private void marcarError() {

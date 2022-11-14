@@ -12,6 +12,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import app.AhorcadoApp;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -58,6 +60,8 @@ public class PalabrasController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		//Bindings
+		
+		
 		palabrasList.itemsProperty().bind(model.palabrasProperty());
 		model.palabraSeleccionadaProperty().bind(palabrasList.getSelectionModel().selectedItemProperty());
 		quitarButton.disableProperty().bind(model.palabraSeleccionadaProperty().isNull());

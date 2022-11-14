@@ -56,7 +56,6 @@ public class PuntuacionesController implements Initializable {
 		BufferedReader br;
 		String linea;
 		if(file.exists()) {
-			System.out.println("Existo");
 			try {
 				br = new BufferedReader(new FileReader(file));
 				

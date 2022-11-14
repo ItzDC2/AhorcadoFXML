@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.ResourceBundle;
 
 import app.AhorcadoApp;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -16,7 +15,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -25,12 +23,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.util.converter.NumberStringConverter;
 import palabras.PalabrasController;
+import palabras.PalabrasModel;
 import puntuaciones.PuntuacionesController;
+import puntuaciones.PuntuacionesModel;
 
-public class PartidaController implements Initializable {
+public class PartidaControllerProfe implements Initializable {
 
-	private PuntuacionesController puntuacionesController = new PuntuacionesController();
-	private PalabrasController palabrasController = new PalabrasController();
+//	private PuntuacionesController puntuacionesController;
+//	private PalabrasController palabrasController;
+	private PalabrasModel palabrasModel = new PalabrasModel();
+	private PuntuacionesModel puntuacionesModel = new PuntuacionesModel();
 	private PartidaModel model = new PartidaModel();
 	
 	private static PartidaController instance;
@@ -55,32 +57,23 @@ public class PartidaController implements Initializable {
 	@FXML
 	private TextField input;
 	
-	@FXML
-	private Button letraButton;
-	
-	@FXML
-	private Button resolverButton;
-	
-	public PartidaController() {
+	public PartidaControllerProfe() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PartidaView.fxml"));
 			loader.setController(this);
 			loader.load();	
-			instance = this;
 		} catch(IOException ex) {
 			throw new RuntimeException(ex);
 		}
-	}	
+	}
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		// Bindings
-		palabrasController.palabraSeleccionadaProperty().bind(model.palabraSeleccionadaProperty());
+//		palabrasController.palabraSeleccionadaProperty().bind(model.palabraSeleccionadaProperty());
+		palabrasModel.palabraSeleccionadaProperty().bind(model.palabraSeleccionadaProperty());
 		puntuacionJugador.textProperty().bindBidirectional(model.puntuacionProperty(), new NumberStringConverter());
-		letraButton.disableProperty().bind(input.textProperty().isEmpty());
-		resolverButton.disableProperty().bind(
-				Bindings.length(input.textProperty()).isEqualTo(model.palabraSeleccionadaProperty().length()).not());
 		
 		//Actions
 		if(!AhorcadoApp.enPartida)
@@ -211,7 +204,7 @@ public class PartidaController implements Initializable {
 		dialog.setHeaderText("Has perdido, ¡más suerte la próxima vez!");
 		dialog.setContentText("Introduce tu nombre de usuario para guardar tu puntuación en el fichero:");
 		Optional<String> opc = dialog.showAndWait();
-		puntuacionesController.guardarPuntuacion(model.getPuntuacion(), opc.get());
+//		puntuacionesController.guardarPuntuacion(model.getPuntuacion(), opc.get());
 		if(opc.isPresent())
 			init(true);
 	}
@@ -231,7 +224,7 @@ public class PartidaController implements Initializable {
 	
 	private void seleccionarPalabra() {
 		Random r = new Random();
-		model.setPalabraSeleccionada(palabrasController.palabrasProperty().get(r.nextInt(palabrasController.palabrasProperty().getSize())));
+		model.setPalabraSeleccionada(palabrasModel.palabrasProperty().get(r.nextInt(palabrasModel  .palabrasProperty().getSize())));
 		model.setLetrasPalabraSeleccionada(model.getPalabraSeleccionada().length());
 		model.setLetrasAcertadas(0);
 	}
